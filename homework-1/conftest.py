@@ -23,14 +23,8 @@ def driver(config):
     url = config['url']
 
     service = Service(r"D:\ProgrammingProjects\PythonProj\drivers\chromedriver_win32\chromedriver.exe")
-
     service.start()
-
     browser = webdriver.Remote(service.service_url)
-    # browser = webdriver.Chrome(
-    #         r"D:\ProgrammingProjects\PythonProj\drivers\chromedriver_win32\chromedriver.exe"
-    # )
-    browser.implicitly_wait(15)
     browser.maximize_window()
     browser.get(url)
 

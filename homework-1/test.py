@@ -6,24 +6,24 @@ import pytest
 
 class TestUI(BaseCase):
 
-    @pytest.mark.ui
+    @pytest.mark.UI
     def test_login(self):
-        user_mail: str = "testiruyushchiy@inbox.ru"
+        user_mail: str = BaseCase.USER_MAIL
         self.click(basic_locators.LOGIN_LOCATORS)
         self.input(basic_locators.NAME, user_mail)
-        self.input(basic_locators.PASSWORD, "bH+fUYviRZ8rbuH")
+        self.input(basic_locators.PASSWORD, BaseCase.USER_PASSWORD)
         self.click(basic_locators.AUTH_FORM_LOCATORS)
         self.click(basic_locators.PROFILE)
         self.click(basic_locators.CONTACT_INFO)
         assert self.find(basic_locators.USER_NAME).text == user_mail
 
-    @pytest.mark.ui
+    @pytest.mark.UI
     def test_logout(self, login):
         self.click(basic_locators.USER_RIGHT_BUTTON)
         self.click(basic_locators.LOGOUT_BUTTON)
         self.find(basic_locators.LOGIN_LOCATORS).is_displayed()
 
-    @pytest.mark.ui
+    @pytest.mark.UI
     def test_contact_info(self, login):
         user_fio: str = "Тест Тестирующий"
         self.click(basic_locators.PROFILE)
@@ -47,17 +47,11 @@ class TestUI(BaseCase):
             )
         ]
     )
-    @pytest.mark.ui
+    @pytest.mark.UI
     def test_pages(self, page, login):
-        self.click(self.locator_with_text(page, basic_locators.MENU_BUTTON))
+        menu_button = self.locator_with_text(page, basic_locators.MENU_BUTTON)
+        self.click(menu_button)
         current_url = self.driver.current_url
         assert page_routes.PAGE[page] in current_url
         #так можно проверить изменившийся UI, выбранная вкладка становится серой
-        # assert "center-module-activeButton" in self.find_by_text(page.NAME, basic_locators.MENU_BUTTON).get_attribute("class")
-
-
-
-
-
-
-
+        assert self.is_button_active(menu_button)
