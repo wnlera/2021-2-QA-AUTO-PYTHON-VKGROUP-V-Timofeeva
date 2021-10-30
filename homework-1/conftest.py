@@ -2,6 +2,8 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
+DRIVER_PATH = r"D:\ProgrammingProjects\PythonProj\drivers\chromedriver_win32\chromedriver.exe"
+
 
 def pytest_addoption(parser):
     parser.addoption('--browser', default='chrome')
@@ -21,12 +23,10 @@ def driver(config):
 
     browser = config['browser']
     url = config['url']
-
-    service = Service(r"D:\ProgrammingProjects\PythonProj\drivers\chromedriver_win32\chromedriver.exe")
+    service = Service(DRIVER_PATH)
     service.start()
     browser = webdriver.Remote(service.service_url)
     browser.maximize_window()
     browser.get(url)
-
     yield browser
     browser.close()

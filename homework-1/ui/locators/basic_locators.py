@@ -13,5 +13,5 @@ USER_NAME = (By.CSS_SELECTOR, "div[data-name = 'username']")
 FIO = (By.CSS_SELECTOR, "div[data-name = 'fio'] input")
 SAVE_CONTACT = (By.CSS_SELECTOR, "button[data-class-name = 'Submit']")
 HOME_BUTTON = (By.XPATH, "//a[@href = '//target.my.com']")
-MENU_BUTTON = (By.XPATH, "//a[text()='same_text']")
+MENU_BUTTON = (By.XPATH, "//a[@href ='same_href']")
 

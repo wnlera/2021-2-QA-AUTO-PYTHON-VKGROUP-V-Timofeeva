@@ -1,11 +1,10 @@
 from base import BaseCase
 from ui.locators import basic_locators
-from ui import page_routes
 import pytest
+from rand_string import get_random_string
 
 
 class TestUI(BaseCase):
-
     @pytest.mark.UI
     def test_login(self):
         user_mail: str = BaseCase.USER_MAIL
@@ -25,7 +24,7 @@ class TestUI(BaseCase):
 
     @pytest.mark.UI
     def test_contact_info(self, login):
-        user_fio: str = "Тест Тестирующий"
+        user_fio = f"{get_random_string(3, 10, True)} {get_random_string(3, 10, True)}"
         self.click(basic_locators.PROFILE)
         self.click(basic_locators.CONTACT_INFO)
         self.find(basic_locators.FIO).clear()
@@ -37,21 +36,21 @@ class TestUI(BaseCase):
         assert self.find(basic_locators.FIO).get_attribute("value") == user_fio
 
     @pytest.mark.parametrize(
-        'page',
+        'page_href',
         [
             pytest.param(
-                'Баланс'
+                '/billing'
             ),
             pytest.param(
-                'Инструменты'
+                '/tools'
             )
         ]
     )
     @pytest.mark.UI
-    def test_pages(self, page, login):
-        menu_button = self.locator_with_text(page, basic_locators.MENU_BUTTON)
+    def test_pages(self, page_href, login):
+        menu_button = self.locator_with_href(page_href, basic_locators.MENU_BUTTON)
         self.click(menu_button)
         current_url = self.driver.current_url
-        assert page_routes.PAGE[page] in current_url
+        assert page_href in current_url
         #так можно проверить изменившийся UI, выбранная вкладка становится серой
         assert self.is_button_active(menu_button)
