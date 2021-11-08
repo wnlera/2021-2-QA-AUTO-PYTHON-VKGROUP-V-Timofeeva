@@ -19,13 +19,3 @@ class TestApi(ApiBase):
         segment_id = self.create_segment()
         delete_result = self.delete_segment(segment_id)
         assert delete_result["successes"][0]["source_id"] == segment_id
-
-
-
-
-
-
-
-
-
-
