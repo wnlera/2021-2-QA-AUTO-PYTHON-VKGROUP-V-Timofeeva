@@ -7,40 +7,24 @@ import allure
 import pytest
 
 from client import ApiClient
-from credentials import USER_MAIL, USER_PASSWORD
+from sources.credentials import USER_MAIL, USER_PASSWORD
 
 
 def pytest_addoption(parser):
-    parser.addoption('--browser', default='chrome')
     parser.addoption('--url', default='https://target.my.com/')
-    parser.addoption('--selenoid', action='store_true')
-    parser.addoption('--vnc', action='store_true')
-    parser.addoption('--debug_log', action='store_true')
 
 
 @pytest.fixture(scope='session')
 def config(request):
-    browser = request.config.getoption('--browser')
     url = request.config.getoption('--url')
-    debug_log = request.config.getoption('--debug_log')
-    if request.config.getoption('--selenoid'):
-        selenoid = 'http://127.0.0.1:4444/wd/hub'
-        if request.config.getoption('--vnc'):
-            vnc = True
-        else:
-            vnc = False
-    else:
-        selenoid = None
-        vnc = False
-
-    return {'browser': browser, 'url': url, 'debug_log': debug_log, 'selenoid': selenoid, 'vnc': vnc}
+    return {'url': url}
 
 
 @pytest.fixture(scope='function')
 def logger(temp_dir, config):
     log_formatter = logging.Formatter('%(asctime)s - %(filename)s - %(levelname)s - %(message)s')
     log_file = os.path.join(temp_dir, 'test.log')
-    log_level = logging.DEBUG if config['debug_log'] else logging.INFO
+    log_level = logging.INFO
 
     file_handler = logging.FileHandler(log_file, 'w')
     file_handler.setFormatter(log_formatter)
@@ -91,9 +75,7 @@ def repo_root():
 
 @pytest.fixture(scope='session')
 def credentials():
-    user = USER_MAIL
-    password = USER_PASSWORD
-    return user, password
+    return USER_MAIL, USER_PASSWORD
 
 
 @pytest.fixture(scope='session')

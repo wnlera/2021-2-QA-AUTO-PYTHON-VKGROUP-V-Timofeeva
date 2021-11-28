@@ -4,7 +4,7 @@ import json
 
 import requests
 
-from const_campaign import campaign
+from sources.const_campaign import campaign, segment
 
 logger = logging.getLogger('test')
 MAX_RESPONSE_LENGTH = 666
@@ -40,8 +40,7 @@ class ApiClient:
     @property
     def auth_headers(self):
         return {
-            "Origin": "https://target.my.com",
-            "Referer": "https://target.my.com/"
+            "Referer": self.base_url
         }
 
     @staticmethod
@@ -70,19 +69,19 @@ class ApiClient:
             logger.info(f'{log_str}\n'
                         f'RESPONSE CONTENT: {response.text}\n')
 
-    def _request(self, method, location, headers=None, data=None, params=None, expected_status=(200,), jsonify=True):
+    def _request(self, method, location, headers=None, files=None, data=None, params=None, expected_status=200,
+                 jsonify=True):
         url = urljoin(self.base_url, location)
         self.log_before_request(url, headers, data, expected_status)
         headers = headers or self.headers
-        response = self.session.request(method, url, headers=headers, data=data, params=params)
+        response = self.session.request(method, url, headers=headers, files=files, data=data, params=params)
         self.log_after_request(response)
 
-        if response.status_code not in expected_status:
+        if response.status_code != expected_status:
             raise ResponseStatusCodeException(f'Got {response.status_code} {response.request} for URL "{url}"')
 
         if jsonify:
-            json_response = response.json()
-            return json_response
+            return response.json()
         return response
 
     def get_segment(self, id_=None):
@@ -90,20 +89,18 @@ class ApiClient:
         return self._request("get", location, params={"id": id_})
 
     def create_segment(self):
-        location = "/api/v2/remarketing/segments.json?fields=relations__object_type,relations__object_id," \
-                   "relations__params,relations__params__score,relations__id,relations_count,id,name,pass_condition," \
-                   "created,campaign_ids,users,flags"
-        data = json.dumps({"name": "Новый сегмент", "pass_condition": 1, "relations": [
-            {"object_type": "remarketing_player", "params": {"type": "positive", "left": 365, "right": 0}}],
-                           "logicType": "or"})
+        location = "/api/v2/remarketing/segments.json"
+        data = json.dumps(segment)
         return self._request("post", location, data=data)
 
     def delete_segment(self, id_=None):
         data = json.dumps([{"source_id": id_, "source_type": "segment"}])
         location = "/api/v1/remarketing/mass_action/delete.json"
-        return self._request("post", location, data=data, expected_status=(200, 204), jsonify=True)
+        return self._request("post", location, data=data, expected_status=200, jsonify=True)
 
     def create_campaign(self):
+        campaign["banners"][0]["urls"]["primary"]["id"] = self.get_url_id()
+        campaign["banners"][0]["content"]["image_240x400"]["id"] = self.get_image_id()
         data = json.dumps(campaign)
         location = "/api/v2/campaigns.json"
         return self._request("post", location, data=data)
@@ -111,12 +108,37 @@ class ApiClient:
     def delete_campaign(self, id_=None):
         data = json.dumps([{"id": id_, "status": "deleted"}])
         location = "/api/v2/campaigns/mass_action.json"
-        return self._request("post", location, data=data, expected_status=(200, 204), jsonify=False)
+        return self._request("post", location, data=data, expected_status=204, jsonify=False)
 
     def get_deleted_campaigns(self):
         location = "/api/v2/campaigns.json?_status=deleted"
         result = self._request("get", location)
         return [item['id'] for item in result['items']]
+
+    def get_image_id(self):
+        try:
+            files = {
+                "file": open('homework-3/sources/target.jpg', 'rb')
+            }
+        except FileNotFoundError:
+            files = {
+                "file": open('../sources/target.jpg', 'rb')
+            }
+        load_data = {"width": 0, "height": 0}
+        load_location = "/api/v2/content/static.json"
+        load_request = self._request("post", load_location, files=files, data=load_data)
+
+        return load_request["id"]
+
+    def get_url_id(self):
+        location = "/api/v1/urls/"
+        url_param = {"url": r"https://www.youtube.com/"}
+        req = self._request("get", location, params=url_param)
+        return req["id"]
+
+    def get_csrf(self):
+        res = self._request("get", "https://target.my.com/csrf/", jsonify=False)
+        self.csrf_token = res.cookies.get("csrftoken")
 
     def _authorize(self):
         data = {
@@ -129,6 +151,5 @@ class ApiClient:
         self._request("POST", "https://auth-ac.my.com/auth?lang=ru&nosavelogin=0",
                       headers=self.auth_headers,
                       data=data, jsonify=False)
-        res = self._request("get", "https://target.my.com/csrf/", jsonify=False)
-        self.csrf_token = res.cookies.get("csrf_token") or res.cookies.get("csrftoken")
+        self.get_csrf()
         logger.info("Logged in")
