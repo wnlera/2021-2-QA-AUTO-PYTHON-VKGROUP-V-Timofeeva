@@ -84,5 +84,3 @@ class ServerErrorRequests(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ip = Column(String(20), nullable=False)
     count = Column(Integer, nullable=False)
-
-

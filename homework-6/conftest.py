@@ -24,3 +24,13 @@ def mysql_orm_client(request) -> MysqlORMClient:
     yield client
     client.connection.close()
 
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--file", action="store", default=r"C:\Users\Valery\Downloads\access.log", help="Укажите путь до лог файла"
+    )
+
+
+@pytest.fixture()
+def file_log(request):
+    return request.config.getoption('--file')

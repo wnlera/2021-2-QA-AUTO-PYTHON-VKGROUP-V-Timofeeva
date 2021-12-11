@@ -4,9 +4,9 @@ from model import RequestCount, CountWithTypes, FrequentRequests, ClientErrorReq
 
 class StatsORM:
 
-    def __init__(self, client):
+    def __init__(self, client, file):
         self.client = client
-        self.log_file = open(r"C:\Users\Valery\Downloads\access.log", "r")
+        self.log_file = open(file, "r")
         self.df = pd.read_csv(self.log_file,
                               sep=r'\s(?=(?:[^"]*"[^"]*")*[^"]*$)(?![^\[]*\])',
                               engine='python',
@@ -36,7 +36,7 @@ class StatsORM:
         request_count = RequestCount(count=numbers)
         self.client.session.add(request_count)
         self.client.session.commit()
-        return request_count
+        return numbers
 
     def get_requests_type_count(self):
         df = self.df.method.value_counts().to_frame().reset_index()
@@ -46,6 +46,7 @@ class StatsORM:
             entry = CountWithTypes(method=row["method"], count=row["count"])
             self.client.session.add(entry)
         self.client.session.commit()
+        return len(df)
 
     def get_frequent_requests(self, top=10):
         df = self.df.url.value_counts().nlargest(top).reset_index()
@@ -55,6 +56,7 @@ class StatsORM:
             entry = FrequentRequests(url=row["url"], count=row["count"])
             self.client.session.add(entry)
         self.client.session.commit()
+        return len(df)
 
     def get_biggest_client_error_requests(self, top=5):
         df = self.df[self.df.status // 100 == 4].nlargest(top, "size").loc[:, ["url", "status", "size", "ip"]]
@@ -66,6 +68,7 @@ class StatsORM:
                                         ip=row["ip"])
             self.client.session.add(entry)
         self.client.session.commit()
+        return len(df)
 
     def get_frequent_server_error_requests(self, top=5):
         df = self.df[self.df.status // 100 == 5].ip.value_counts().nlargest(top).reset_index()
@@ -76,3 +79,4 @@ class StatsORM:
                                         count=row["count"])
             self.client.session.add(entry)
         self.client.session.commit()
+        return len(df)
