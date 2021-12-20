@@ -1,3 +1,0 @@
-2021-12-20 18:20:56,513 - base_page.py - INFO - Clicking on ('xpath', "//a[@href = '/reg']")
-2021-12-20 18:20:57,849 - base_page.py - INFO - Clicking on ('xpath', "//input[@id = 'term']")
-2021-12-20 18:20:58,059 - base_page.py - INFO - Clicking on <selenium.webdriver.remote.webelement.WebElement (session="0bed99eb19839106caac7bab0b917b44", element="1e6d40f9-d809-4fbb-b9c8-4af1dd962278")>
