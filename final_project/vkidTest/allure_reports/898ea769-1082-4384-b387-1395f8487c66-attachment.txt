@@ -1,0 +1,1 @@
+2021-12-20 22:04:37,198 - base_page.py - INFO - Clicking on ('xpath', "//a[@href = '/reg']")

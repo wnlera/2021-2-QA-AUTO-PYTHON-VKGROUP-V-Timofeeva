@@ -1,0 +1,1 @@
+2021-12-20 18:19:15,510 - base_page.py - INFO - Clicking on ('id', 'submit')

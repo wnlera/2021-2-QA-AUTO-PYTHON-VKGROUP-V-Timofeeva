@@ -1,0 +1,2 @@
+SEVERE - network
+http://vk_app:5002/reg - Failed to load resource: the server responded with a status of 500 (INTERNAL SERVER ERROR)

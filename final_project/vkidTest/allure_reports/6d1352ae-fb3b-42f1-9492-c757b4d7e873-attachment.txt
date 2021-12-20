@@ -1,0 +1,2 @@
+2021-12-20 22:06:24,610 - base_page.py - INFO - Clicking on ('xpath', "//a[@href = '/reg']")
+2021-12-20 22:06:25,926 - base_page.py - INFO - Clicking on <selenium.webdriver.remote.webelement.WebElement (session="33da20e13bc87e7052e5e17f4ebcddd7", element="89d70584-8fa7-4dd3-8ee7-5527612c8d6f")>

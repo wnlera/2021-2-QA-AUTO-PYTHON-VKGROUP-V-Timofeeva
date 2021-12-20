@@ -1,0 +1,5 @@
+VK_URL = vkid_mock:5001
+APP_PORT = 5002
+MYSQL_HOST = vkid_db
+MYSQL_PORT = 3306
+MYSQL_DB = TEST_DB
