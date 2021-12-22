@@ -1,0 +1,13 @@
+ * Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)
+127.0.0.1 - - [30/Nov/2021 07:39:50] "[33mGET / HTTP/1.1[0m" 404 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "POST /card HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "POST /card HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "GET /card/2 HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "POST /card HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "GET /card/3 HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "PUT /card/3 HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "POST /card HTTP/1.1" 200 -
+127.0.0.1 - - [30/Nov/2021 07:39:51] "DELETE /card/4 HTTP/1.1" 200 -
+D:\ProgrammingProjects\PythonProj\2021-2-QA-AUTO-PYTHON-VKGROUP-V-Timofeeva\homework-7\application\app.py:121: UserWarning: The 'environ['werkzeug.server.shutdown']' function is deprecated and will be removed in Werkzeug 2.1.
+  terminate_func()
+127.0.0.1 - - [30/Nov/2021 07:39:51] "GET /shutdown HTTP/1.1" 200 -
