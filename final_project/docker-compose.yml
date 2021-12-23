@@ -1,0 +1,77 @@
+version: '3.1'
+
+services:
+  selenoid:
+    image: "aerokube/selenoid"
+    hostname: selenoid
+    ports:
+      - 4444:4444
+    volumes:
+      - ./vkidTest/selenoid/:/etc/selenoid/
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs", "-container-network", "final_project_default"]
+
+  selenoid-ui:  # may be excluded and run manually
+    image: "aerokube/selenoid-ui"
+    restart: always
+    links:
+      - selenoid
+    ports:
+      - 8080:8080
+    command: ["--selenoid-uri", "http://selenoid:4444"]
+
+  vkid_mock:
+    build:
+      context: vkidMock
+      dockerfile: vkidMock/Dockerfile
+    container_name: vkid_mock
+    hostname: vkid_mock
+    image: vkid_mock
+    ports:
+      - 5001:5001
+    volumes:
+      - ./vkidMock/:/app/
+
+  vkid_db:
+    image: percona:latest
+    container_name: vkid_db
+    hostname: vkid_db
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    volumes:
+      - ./vkidDb:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+      
+  vk_app:
+    image: myapp:latest
+    restart: on-failure
+    container_name: vk_app
+    hostname: vk_app
+    ports:
+      - 5002:5002
+    volumes:
+      - ./vkidApp/:/etc/vk_config/
+    entrypoint: /etc/vk_config/run_vkid_app.sh
+    depends_on:
+      - vkid_db
+      - vkid_mock
+
+#  vkid_test:
+#    build:
+#      context: ./vkidTest
+#      dockerfile: Dockerfile
+#    container_name: vkid_test
+#    hostname: vkid_test
+#    image: vkid_test
+#    environment:
+#      POSTGRES_HOST: db_docker
+#      POSTGRES_PASSWORD: test
+#      POSTGRES_USER: postgres
+#      POSTGRES_DB: api_db
+#      POSTGRES_PORT: 5432
+#      FAKE_DB: 1
+#    ports:
+#      - 5000:5000
+#    depends_on:
+#      - vk_app

@@ -1,0 +1,15 @@
+Container vk_app  Stopping
+Container vk_app  Stopping
+Container final_project-selenoid-ui-1  Stopping
+Container final_project-selenoid-ui-1  Stopping
+Container vk_app  Error while Stopping
+Container vk_app  Error while Stopping
+Container final_project-selenoid-ui-1  Stopped
+Container final_project-selenoid-ui-1  Removing
+Container final_project-selenoid-ui-1  Removed
+Container final_project-selenoid-1  Stopping
+Container final_project-selenoid-1  Stopping
+Container final_project-selenoid-1  Stopped
+Container final_project-selenoid-1  Removing
+Container final_project-selenoid-1  Removed
+Error response from daemon: cannot stop container: e471a957ef9b9b6ba36ed96a48cb86b5779edae8e5cc5b67de85794cc3166d32: tried to kill container, but did not receive an exit event
